@@ -25,6 +25,22 @@ class TaskManagerClient:
             response.raise_for_status()
             return response.json()
 
+    async def resolve_user(
+        self,
+        provider: str,
+        external_id: str,
+    ) -> dict:
+        async with httpx.AsyncClient(base_url=self.base_url) as client:
+            response = await client.get(
+                "/users/resolve",
+                params={
+                    "provider": provider,
+                    "external_id": external_id,
+                },
+            )
+            response.raise_for_status()
+            return response.json()
+
     async def link_user(
         self,
         provider: str,

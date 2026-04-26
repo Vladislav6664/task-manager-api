@@ -1,5 +1,10 @@
 import os
 
+from apps.shared.env import load_env_file
+
+
+load_env_file()
+
 
 class Settings:
     app_name = "Task Manager API"

@@ -1,5 +1,10 @@
 import os
 
+from apps.shared.env import load_env_file
+
+
+load_env_file()
+
 
 class Settings:
     telegram_bot_token = os.getenv("TELEGRAM_BOT_TOKEN", "")

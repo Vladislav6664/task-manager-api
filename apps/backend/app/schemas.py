@@ -35,6 +35,13 @@ class User(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
 
+class UserResolveResponse(BaseModel):
+    provider: ProviderType
+    external_id: str
+    linked: bool
+    user: User | None = None
+
+
 class TaskCreate(BaseModel):
     title: str = Field(..., min_length=1, max_length=100)
     description: str | None = Field(default=None, max_length=500)

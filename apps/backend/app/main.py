@@ -59,6 +59,21 @@ def link_user_identity(payload: schemas.UserLinkRequest, db: Session = Depends(g
         raise HTTPException(status_code=409, detail="Identity already linked") from exc
 
 
+@app.get("/users/resolve", response_model=schemas.UserResolveResponse)
+def resolve_user_identity(
+    provider: schemas.ProviderType,
+    external_id: str,
+    db: Session = Depends(get_db),
+):
+    user = user_service.get_user_by_identity(db, provider, external_id)
+    return schemas.UserResolveResponse(
+        provider=provider,
+        external_id=external_id,
+        linked=user is not None,
+        user=user,
+    )
+
+
 @app.get("/users/me", response_model=schemas.User)
 def get_current_user_profile(current_user=Depends(get_current_user)):
     return current_user

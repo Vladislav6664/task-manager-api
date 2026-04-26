@@ -25,6 +25,40 @@ def test_identify_user_returns_stable_user_key(client):
     assert first["identities"][0]["provider"] == "telegram"
 
 
+def test_resolve_user_identity_when_not_linked(client):
+    response = client.get("/users/resolve?provider=vk&external_id=vk-unlinked")
+
+    assert response.status_code == 200
+    assert response.json() == {
+        "provider": "vk",
+        "external_id": "vk-unlinked",
+        "linked": False,
+        "user": None,
+    }
+
+
+def test_resolve_user_identity_when_linked(client):
+    user = create_user(client, provider="telegram", external_id="1005", name="Carol")
+    link_response = client.post(
+        "/users/link",
+        json={
+            "provider": "vk",
+            "external_id": "vk-linked",
+            "user_key": user["user_key"],
+        },
+    )
+    assert link_response.status_code == 200
+
+    response = client.get("/users/resolve?provider=vk&external_id=vk-linked")
+
+    assert response.status_code == 200
+    data = response.json()
+    assert data["provider"] == "vk"
+    assert data["external_id"] == "vk-linked"
+    assert data["linked"] is True
+    assert data["user"]["user_key"] == user["user_key"]
+
+
 def test_link_vk_identity_to_existing_user(client):
     user = create_user(client, provider="telegram", external_id="1002", name="Bob")
 

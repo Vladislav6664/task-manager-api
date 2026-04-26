@@ -3,5 +3,6 @@ __pycache__/
 *.py[cod]
 *.db
 .env
+.vk_client_session.json
 .idea/
 .pytest_cache/

@@ -55,3 +55,11 @@ def link_identity(
 
 def get_user_by_key(db: Session, user_key: str) -> UserDB | None:
     return crud.get_user_by_key(db, user_key)
+
+
+def get_user_by_identity(
+    db: Session,
+    provider: str,
+    external_id: str,
+) -> UserDB | None:
+    return crud.get_user_by_identity(db, provider, external_id)

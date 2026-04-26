@@ -131,7 +131,20 @@ TM-AB12CD34
 
 ### Шаг 3. Пользователь приходит в VK
 
+Сначала VK должен не создавать пользователя автоматически, а проверить, привязан ли уже этот `vk_id`.
+
 VK-клиент вызывает backend:
+
+```http
+GET /users/resolve?provider=vk&external_id=vk_user_id
+```
+
+Варианты:
+
+- если `linked=true`, значит VK уже связан с существующим пользователем;
+- если `linked=false`, нужно либо ввести `user_key` из Telegram, либо создать отдельный VK-only аккаунт.
+
+Если пользователь хочет связать VK с уже существующим аккаунтом, тогда вызывается:
 
 ```http
 POST /users/link
@@ -147,7 +160,16 @@ POST /users/link
 }
 ```
 
-После этого Telegram и VK будут связаны с одним внутренним пользователем.
+Если пользователь не хочет связывать аккаунты, VK может явно создать отдельного пользователя через:
+
+```http
+POST /users/identify
+```
+
+После этого Telegram и VK будут либо:
+
+- связаны с одним внутренним пользователем;
+- либо жить как два разных аккаунта, если VK был создан отдельно.
 
 ## Запуск backend
 
@@ -170,6 +192,7 @@ http://127.0.0.1:8000/docs
 - `TASK_MANAGER_CORS_ORIGINS`, по умолчанию: `*`
 - `TELEGRAM_BOT_TOKEN`
 - `VK_EXTERNAL_ID`
+- `VK_CLIENT_SESSION_PATH`, по умолчанию: `.vk_client_session.json`
 
 ## Запуск Telegram-бота
 
@@ -199,7 +222,40 @@ python -m apps.telegram_bot.app.main
 Это пока не VK Mini App, а учебный и технический Python-клиент.
 Он нужен, чтобы уже сейчас проверить сценарий привязки и работу VK-задач через backend.
 
-### Найти или создать VK-пользователя
+### Проверить, привязан ли VK уже сейчас
+
+```powershell
+python -m apps.vk_client.app.main resolve --vk-id 10001
+```
+
+### Реалистичный onboarding flow
+
+```powershell
+python -m apps.vk_client.app.main onboard --vk-id 10001 --name "Vlad"
+```
+
+Что делает `onboard`:
+
+- вызывает `resolve`;
+- если VK уже привязан, показывает пользователя и его VK-задачи;
+- если не привязан, предлагает:
+  либо ввести существующий `user_key`,
+  либо создать отдельный VK-only аккаунт.
+- после успешной привязки или создания сохраняет локальную VK-сессию в `.vk_client_session.json`
+
+### Посмотреть сохраненную VK-сессию
+
+```powershell
+python -m apps.vk_client.app.main session
+```
+
+### Очистить сохраненную VK-сессию
+
+```powershell
+python -m apps.vk_client.app.main clear-session
+```
+
+### Низкоуровневое создание или поиск VK-пользователя
 
 ```powershell
 python -m apps.vk_client.app.main identify --vk-id 10001 --name "Vlad"
@@ -223,10 +279,22 @@ python -m apps.vk_client.app.main tasks --user-key TM-AB12CD34
 python -m apps.vk_client.app.main tasks --user-key TM-AB12CD34 --source vk
 ```
 
+Если `user_key` уже сохранен после `onboard` или `link`, его можно не передавать:
+
+```powershell
+python -m apps.vk_client.app.main tasks --source vk
+```
+
 ### Создать задачу из VK
 
 ```powershell
 python -m apps.vk_client.app.main add --user-key TM-AB12CD34 --title "Сделать VK flow" --description "Проверить привязку" --priority 2
+```
+
+После сохранения сессии можно короче:
+
+```powershell
+python -m apps.vk_client.app.main add --title "Сделать VK flow" --description "Проверить привязку" --priority 2
 ```
 
 ## Почему мы это написали именно так
