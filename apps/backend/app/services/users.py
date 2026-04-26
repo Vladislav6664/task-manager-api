@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
 
-from app import crud
-from app.models import UserDB
+from apps.backend.app import crud
+from apps.backend.app.models import UserDB
 
 
 class UserKeyNotFoundError(Exception):

@@ -4,12 +4,12 @@ from fastapi import Depends, FastAPI, Header, HTTPException, Response, status
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 
-from app import schemas
-from app.config import settings
-from app.database import initialize_database
-from app.dependencies import get_db
-from app.services import tasks as task_service
-from app.services import users as user_service
+from apps.backend.app import schemas
+from apps.backend.app.config import settings
+from apps.backend.app.database import initialize_database
+from apps.backend.app.dependencies import get_db
+from apps.backend.app.services import tasks as task_service
+from apps.backend.app.services import users as user_service
 
 initialize_database()
 

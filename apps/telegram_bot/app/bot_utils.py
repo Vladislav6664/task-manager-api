@@ -1,7 +1,4 @@
-from app.schemas import TaskCreate
-
-
-def parse_add_command(arguments: str | None) -> TaskCreate:
+def parse_add_command(arguments: str | None) -> tuple[str, str | None, int]:
     if not arguments:
         raise ValueError("Usage: /add <title> | <description> | <priority>")
 
@@ -12,8 +9,7 @@ def parse_add_command(arguments: str | None) -> TaskCreate:
     title = parts[0]
     description = parts[1] if len(parts) >= 2 and parts[1] else None
     priority = int(parts[2]) if len(parts) == 3 and parts[2] else 1
-
-    return TaskCreate(title=title, description=description, priority=priority)
+    return title, description, priority
 
 
 def parse_task_id(arguments: str | None, command_name: str) -> int:

@@ -2,8 +2,8 @@ import secrets
 
 from sqlalchemy.orm import Session
 
-from app.models import TaskDB, UserDB, UserIdentityDB
-from app.schemas import TaskCreate, TaskUpdate
+from apps.backend.app.models import TaskDB, UserDB, UserIdentityDB
+from apps.backend.app.schemas import TaskCreate, TaskUpdate
 
 
 def _generate_user_key() -> str:

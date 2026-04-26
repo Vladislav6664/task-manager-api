@@ -1,6 +1,6 @@
-from app.schemas import TaskCreate
-from app.services import tasks as task_service
-from app.services import users as user_service
+from apps.backend.app.schemas import TaskCreate
+from apps.backend.app.services import tasks as task_service
+from apps.backend.app.services import users as user_service
 
 
 def create_user(client, provider="web", external_id="web-user-1", name="Test User"):

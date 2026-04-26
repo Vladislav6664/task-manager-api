@@ -1,7 +1,7 @@
 from sqlalchemy import Column, ForeignKey, Integer, String, UniqueConstraint
 from sqlalchemy.orm import relationship
 
-from app.database import Base
+from apps.backend.app.database import Base
 
 
 class UserDB(Base):
